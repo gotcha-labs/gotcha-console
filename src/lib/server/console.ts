@@ -5,6 +5,10 @@ import { Application } from "./types";
 import { getAccessToken } from "@auth0/nextjs-auth0";
 import env from "./env";
 
+// Server actions used by the console UI to interact with the Gotcha API.
+
+// Fetch the list of console applications for the authenticated user. The
+// result is cached server side and revalidated when applications are mutated.
 export const getApplications = unstable_cache(
   async (accessToken: string): Promise<Application[]> => {
     const apps: { id: string; label?: string }[] = await fetch(
@@ -30,6 +34,8 @@ export const getApplications = unstable_cache(
   { tags: ["applications"] },
 );
 
+// Create a new application on the Gotcha service. When successful the
+// applications cache is revalidated so subsequent calls include the new entry.
 export async function createApplication(name?: string) {
   await fetch(`${env.GOTCHA_ORIGIN}/api/console`, {
     method: "POST",
@@ -45,6 +51,8 @@ export async function createApplication(name?: string) {
   revalidateTag("applications");
 }
 
+// Delete the specified application and trigger a cache revalidation so the UI
+// reflects the removal immediately.
 export async function deleteApplication(id: string) {
   await fetch(`${env.GOTCHA_ORIGIN}/api/console/${id}`, {
     method: "DELETE",
@@ -60,6 +68,8 @@ type UpdateApplication = {
   name?: string;
 };
 
+// Update an application's metadata and revalidate the applications cache so any
+// changes are immediately visible to the user interface.
 export async function updateApplication(
   consoleId: string,
   updateApp: UpdateApplication,

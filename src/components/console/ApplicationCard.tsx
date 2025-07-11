@@ -6,6 +6,10 @@ import EditableLabel from "../EditableLabel";
 import { deleteApplication, updateApplication } from "@/lib/server/console";
 import { Application } from "@/lib/server/types";
 
+// UI component used to display and manage a single application entry. It allows
+// inline editing of the application name and reveals management actions when
+// expanded.
+
 type ApplicationCardProps = {
   app: Application;
 };
@@ -26,6 +30,7 @@ export default function ApplicationCard({ app }: ApplicationCardProps) {
           onClick={() => setIsExpanded(!isExpanded)}
           className="flex-grow self-stretch cursor-pointer"
         ></div>
+        {/* Toggle button expands or collapses the management actions */}
         <button
           onClick={() => setIsExpanded(!isExpanded)}
           className="my-4 text-gray-500 hover:text-gray-700"

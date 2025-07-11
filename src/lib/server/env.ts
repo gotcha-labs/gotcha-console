@@ -1,5 +1,8 @@
 import { z } from "zod";
 
+// Define and validate all required environment variables for the server. Any
+// missing or invalid value will cause the application to fail fast on start up.
+
 const envSchema = z.object({
   AUTH0_SECRET: z.string().min(1),
   AUTH0_BASE_URL: z.string().url(),
@@ -12,6 +15,8 @@ const envSchema = z.object({
 
 type EnvVariables = z.infer<typeof envSchema>;
 
+// Read the environment variables from `process.env` and ensure they conform to
+// `envSchema`. Any validation error is surfaced as a descriptive exception.
 function validateEnv(): EnvVariables {
   try {
     return envSchema.parse({
@@ -38,6 +43,7 @@ function validateEnv(): EnvVariables {
 
 const env = validateEnv();
 
+// Export each variable individually for convenience throughout the codebase.
 export const {
   AUTH0_SECRET,
   AUTH0_BASE_URL,
