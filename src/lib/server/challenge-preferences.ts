@@ -30,13 +30,7 @@ export const getChallengePreferences = unstable_cache(
   { tags: ["challenge-preferences"] },
 );
 
-type UpdateChallengePreferences = {
-  width?: number;
-  height?: number;
-  smallWidth?: number;
-  smallHeight?: number;
-  logoUrl?: string | null;
-};
+type UpdateChallengePreferences = Partial<ChallengePreferences>;
 
 export async function updateChallengePreferences(
   appId: string,
@@ -55,7 +49,7 @@ export async function updateChallengePreferences(
         height: update.height,
         small_width: update.smallWidth,
         small_height: update.smallHeight,
-        logoUrl: update.logoUrl,
+        logo_url: update.logoUrl,
       }),
     },
   );

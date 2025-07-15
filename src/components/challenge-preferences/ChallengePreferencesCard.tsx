@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChallengePreferences } from "@/lib/server/types";
 
 type ChallengePreferencesCardProps = {
@@ -15,6 +15,10 @@ export default function ChallengePreferencesCard({
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(preferences);
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    console.log(formData);
+  }, [formData]);
 
   const handleSave = async () => {
     setIsLoading(true);
@@ -183,7 +187,7 @@ export default function ChallengePreferencesCard({
           <h4 className="font-medium text-gray-700 border-b pb-2">Branding</h4>
           <div>
             <label className="block text-sm font-medium text-gray-600 mb-1">
-              Logo URL
+              Short logo URL
             </label>
             {isEditing ? (
               <input
