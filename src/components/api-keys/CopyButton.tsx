@@ -23,7 +23,7 @@ export default function CopyButton({ text }: CopyButtonProps) {
     <div className="relative">
       <button
         onClick={copyToClipboard}
-        className="text-gray-500 hover:text-gray-700"
+        className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
         title="Copy to clipboard"
       >
         <ClipboardDocumentIcon className="h-5 w-5" />

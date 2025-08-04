@@ -1,6 +1,7 @@
 import { createApplication, getApplications } from "@/lib/server/console";
 import ApplicationCard from "@/components/console/ApplicationCard";
 import { getAccessToken } from "@auth0/nextjs-auth0";
+import { PlusIcon } from "@heroicons/react/24/outline";
 
 export const dynamic = "force-dynamic";
 
@@ -15,21 +16,30 @@ export default async function ConsolePage() {
 
   return (
     <>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">Applications</h2>
-        <form action={handleSubmit}>
-          <input
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+        <div>
+          <h2 className="text-3xl font-bold text-gray-100">Your Applications</h2>
+          <p className="text-gray-400">Manage and create applications for your integration</p>
+        </div>
+        <form action={handleSubmit} className="mt-4 sm:mt-0">
+          <button
             type="submit"
-            value="New Application"
-            className="bg-blue-500 hover:bg-blue-600 cursor-pointer text-white px-4 py-2 rounded-md"
-          />
+            className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg shadow flex items-center"
+          >
+            <PlusIcon className="h-5 w-5 mr-2" />
+            New Application
+          </button>
         </form>
       </div>
 
-      <div className="space-y-4">
-        {apps.map((app) => (
-          <ApplicationCard key={app.id} app={app} />
-        ))}
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {apps.length === 0 ? (
+          <p className="text-gray-400">No applications yet.</p>
+        ) : (
+          apps.map((app) => (
+            <ApplicationCard key={app.id} app={app} />
+          ))
+        )}
       </div>
     </>
   );

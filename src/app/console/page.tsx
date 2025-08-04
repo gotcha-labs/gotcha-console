@@ -1,6 +1,7 @@
 import { getApplications, createApplication } from "@/lib/server/console";
 import { redirect } from "next/navigation";
-import { RocketLaunchIcon } from "@heroicons/react/24/outline";
+import { PlusIcon } from "@heroicons/react/24/outline";
+import Image from "next/image";
 import { getAccessToken } from "@auth0/nextjs-auth0";
 
 export default async function WelcomeConsolePage() {
@@ -11,17 +12,23 @@ export default async function WelcomeConsolePage() {
   }
 
   return (
-    <div className="min-h-[80vh] flex flex-col items-center justify-center px-4">
+    <div className="min-h-[80vh] flex flex-col items-center justify-center px-4 bg-background text-foreground">
       <div className="text-center max-w-2xl mx-auto">
         <div className="mb-8">
-          <RocketLaunchIcon className="h-16 w-16 text-blue-500 mx-auto" />
+          <Image
+            src="/logo.svg"
+            alt="Gotcha logo"
+            width={64}
+            height={64}
+            className="mx-auto"
+          />
         </div>
 
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">
+        <h1 className="text-4xl font-bold text-gray-100 mb-4">
           Welcome to Gotcha Console!
         </h1>
 
-        <p className="text-lg text-gray-600 mb-8">
+        <p className="text-lg text-gray-400 mb-8">
           Get started by creating your first application. You'll be able to
           manage your API keys, monitor usage, and configure your integration
           all in one place.
@@ -32,11 +39,12 @@ export default async function WelcomeConsolePage() {
             type="submit"
             className="inline-flex items-center px-6 py-3 border border-transparent text-lg font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-sm transition-colors duration-200"
           >
+            <PlusIcon className="h-5 w-5 mr-2" />
             Create Your First Application
           </button>
         </form>
 
-        <div className="mt-12 text-sm text-gray-500">
+        <div className="mt-12 text-sm text-gray-400">
           <p>
             Need help getting started?{" "}
             <a

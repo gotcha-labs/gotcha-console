@@ -36,9 +36,9 @@ export default function ChallengePreferencesCard({
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow border">
+    <div className="bg-gray-800 p-6 rounded-lg shadow-sm">
       <div className="flex justify-between items-center mb-6">
-        <h3 className="text-lg font-semibold text-gray-800">
+        <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
           Challenge Display Settings
         </h3>
         {!isEditing ? (
@@ -70,12 +70,12 @@ export default function ChallengePreferencesCard({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Desktop Dimensions */}
         <div className="space-y-4">
-          <h4 className="font-medium text-gray-700 border-b pb-2">
+          <h4 className="font-medium text-gray-200 pb-2">
             Desktop Dimensions
           </h4>
           <div className="space-y-3">
             <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">
+              <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">
                 Width (px)
               </label>
               {isEditing ? (
@@ -88,18 +88,18 @@ export default function ChallengePreferencesCard({
                       width: parseInt(e.target.value) || 0,
                     })
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   min="100"
                   max="1000"
                 />
               ) : (
-                <div className="px-3 py-2 bg-gray-50 rounded-md text-gray-700">
+                <div className="px-3 py-2 bg-gray-50 dark:bg-gray-900 rounded-md text-gray-700 dark:text-gray-300">
                   {preferences.width} px
                 </div>
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">
+              <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">
                 Height (px)
               </label>
               {isEditing ? (
@@ -112,12 +112,12 @@ export default function ChallengePreferencesCard({
                       height: parseInt(e.target.value) || 0,
                     })
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   min="100"
                   max="800"
                 />
               ) : (
-                <div className="px-3 py-2 bg-gray-50 rounded-md text-gray-700">
+                <div className="px-3 py-2 bg-gray-50 dark:bg-gray-900 rounded-md text-gray-700 dark:text-gray-300">
                   {preferences.height} px
                 </div>
               )}
@@ -127,12 +127,12 @@ export default function ChallengePreferencesCard({
 
         {/* Mobile Dimensions */}
         <div className="space-y-4">
-          <h4 className="font-medium text-gray-700 border-b pb-2">
+          <h4 className="font-medium text-gray-200 pb-2">
             Mobile Dimensions
           </h4>
           <div className="space-y-3">
             <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">
+              <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">
                 Small Width (px)
               </label>
               {isEditing ? (
@@ -145,18 +145,18 @@ export default function ChallengePreferencesCard({
                       smallWidth: parseInt(e.target.value) || 0,
                     })
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   min="200"
                   max="500"
                 />
               ) : (
-                <div className="px-3 py-2 bg-gray-50 rounded-md text-gray-700">
+                <div className="px-3 py-2 bg-gray-50 dark:bg-gray-900 rounded-md text-gray-700 dark:text-gray-300">
                   {preferences.smallWidth} px
                 </div>
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">
+              <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">
                 Small Height (px)
               </label>
               {isEditing ? (
@@ -169,12 +169,12 @@ export default function ChallengePreferencesCard({
                       smallHeight: parseInt(e.target.value) || 0,
                     })
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   min="100"
                   max="400"
                 />
               ) : (
-                <div className="px-3 py-2 bg-gray-50 rounded-md text-gray-700">
+                <div className="px-3 py-2 bg-gray-50 dark:bg-gray-900 rounded-md text-gray-700 dark:text-gray-300">
                   {preferences.smallHeight} px
                 </div>
               )}
@@ -184,9 +184,9 @@ export default function ChallengePreferencesCard({
 
         {/* Logo URL - spans full width */}
         <div className="md:col-span-2 space-y-4">
-          <h4 className="font-medium text-gray-700 border-b pb-2">Branding</h4>
+          <h4 className="font-medium text-gray-200 pb-2">Branding</h4>
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
+              <label className="block text-sm font-medium text-gray-300 mb-1">
               Short logo URL
             </label>
             {isEditing ? (
@@ -197,14 +197,14 @@ export default function ChallengePreferencesCard({
                   setFormData({ ...formData, logoUrl: e.target.value || null })
                 }
                 placeholder="https://example.com/logo.png"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             ) : (
-              <div className="px-3 py-2 bg-gray-50 rounded-md text-gray-700">
+              <div className="px-3 py-2 bg-gray-50 dark:bg-gray-900 rounded-md text-gray-700 dark:text-gray-300">
                 {preferences.logoUrl || "No logo set"}
               </div>
             )}
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               Optional: URL to your logo image that will be displayed in the
               challenge
             </p>
