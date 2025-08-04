@@ -1,5 +1,6 @@
 import Sidebar from "@/components/sidebar/Sidebar";
 import Topbar from "@/components/topbar/Topbar";
+import { SidebarProvider } from "@/components/sidebar/SidebarContext";
 import { getApplications } from "@/lib/server/console";
 import { getAccessToken } from "@auth0/nextjs-auth0";
 import { redirect } from "next/navigation";
@@ -18,15 +19,15 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="flex h-screen">
-      <Sidebar appId={params.appId} />
+    <SidebarProvider>
+      <div className="flex h-screen">
+        <Sidebar appId={params.appId} />
 
-      <div className="flex-1 p-2">
-        <div className="bg-white rounded-3xl shadow-sm h-[calc(100vh-1rem)] flex flex-col">
+        <div className="flex-1 flex flex-col bg-background">
           <Topbar />
-          <main className="flex-1 overflow-auto p-8 shadow-md">{children}</main>
+          <main className="flex-1 overflow-auto p-8">{children}</main>
         </div>
       </div>
-    </div>
+    </SidebarProvider>
   );
 }
