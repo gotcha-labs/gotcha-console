@@ -20,8 +20,8 @@ export default function KeyField({
 
   return (
     <div className="flex items-center space-x-2">
-      <span className="text-sm text-gray-500 w-24">{label}:</span>
-      <code className="bg-gray-100 px-3 py-1 rounded flex-1">
+      <span className="text-sm text-gray-500 dark:text-gray-400 w-24">{label}:</span>
+      <code className="bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded flex-1">
         {displayValue}
       </code>
       <div className="flex items-center space-x-2 w-[72px] justify-end">

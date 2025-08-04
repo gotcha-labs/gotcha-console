@@ -26,10 +26,10 @@ export default async function ChallengePreferencesPage({
   return (
     <>
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">
+        <h2 className="text-2xl font-bold text-gray-100">
           Challenge Preferences
         </h2>
-        <p className="text-gray-600 mt-2">
+        <p className="text-gray-400 mt-2">
           Customize the appearance and dimensions of your CAPTCHA challenges
         </p>
       </div>

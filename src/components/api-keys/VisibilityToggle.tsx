@@ -12,7 +12,7 @@ export default function VisibilityToggle({
   return (
     <button
       onClick={onToggle}
-      className="text-gray-500 hover:text-gray-700"
+      className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
       title={show ? "Hide secret" : "Show secret"}
     >
       {show ? (

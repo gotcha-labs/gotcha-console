@@ -23,6 +23,8 @@ export default function Toast({
         transform transition-all duration-200
         ${show ? "opacity-100 translate-y-0" : "invisible opacity-0 translate-y-1 pointer-events-none"}
       `}
+      role="alert"
+      aria-live="assertive"
     >
       {children}
     </div>
