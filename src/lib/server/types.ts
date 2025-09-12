@@ -2,6 +2,7 @@ export type ApiKey = {
   siteKey: string;
   secretKey: string;
   label: string | null;
+  allowedDomains: string[];
 };
 
 export type Application = {

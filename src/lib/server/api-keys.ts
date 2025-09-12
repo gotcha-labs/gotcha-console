@@ -7,17 +7,22 @@ import env from "./env";
 
 export const getApiKeys = unstable_cache(
   async (accessToken: string, appId: string): Promise<ApiKey[]> => {
-    const keys: { site_key: string; secret: string; label: string | null }[] =
-      await fetch(`${env.GOTCHA_ORIGIN}/api/console/${appId}/api-key`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }).then((r) => r.json());
+    const keys: {
+      site_key: string;
+      secret: string;
+      label: string | null;
+      allowed_domains?: string[];
+    }[] = await fetch(`${env.GOTCHA_ORIGIN}/api/console/${appId}/api-key`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }).then((r) => r.json());
 
     return keys.map((k) => ({
       siteKey: k.site_key,
       secretKey: k.secret,
       label: k.label,
+      allowedDomains: k.allowed_domains || [], // Placeholder: backend doesn't support this yet
     }));
   },
   ["api-keys"],
@@ -37,6 +42,7 @@ export async function generateApiKey(appId: string) {
 
 type UpdateApiKey = {
   name?: string;
+  allowedDomains?: string[];
 };
 
 export async function updateApiKey(
@@ -52,6 +58,7 @@ export async function updateApiKey(
     },
     body: JSON.stringify({
       label: update.name ?? null,
+      allowed_domains: update.allowedDomains ?? null,
     }),
   });
 

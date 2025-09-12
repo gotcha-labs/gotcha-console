@@ -5,16 +5,23 @@ import { useState, useRef } from "react";
 import KeyField from "./KeyField";
 import EditableLabel from "../EditableLabel";
 import ConfirmModal from "../ConfirmModal";
+import DomainManager from "./DomainManager";
 import { revokeApiKey } from "@/lib/server/api-keys";
 import { ApiKey } from "@/lib/server/types";
 
 type ApiKeyCardProps = {
   apiKey: ApiKey;
   onEdit?: (label: string) => Promise<void>;
+  onDomainsChange?: (domains: string[]) => Promise<void>;
   appId: string;
 };
 
-export default function ApiKeyCard({ apiKey, onEdit, appId }: ApiKeyCardProps) {
+export default function ApiKeyCard({
+  apiKey,
+  onEdit,
+  onDomainsChange,
+  appId,
+}: ApiKeyCardProps) {
   const [open, setOpen] = useState(false);
   const formRef = useRef<HTMLFormElement | null>(null);
 
@@ -51,9 +58,18 @@ export default function ApiKeyCard({ apiKey, onEdit, appId }: ApiKeyCardProps) {
         </ConfirmModal>
       </div>
 
-      <div className="space-y-3">
-        <KeyField label="Site Key" value={apiKey.siteKey} />
-        <KeyField label="Secret Key" value={apiKey.secretKey} isSecret />
+      <div className="space-y-4">
+        <div className="space-y-3">
+          <KeyField label="Site Key" value={apiKey.siteKey} />
+          <KeyField label="Secret Key" value={apiKey.secretKey} isSecret />
+        </div>
+
+        <div className="border-t border-gray-700 pt-4">
+          <DomainManager
+            domains={apiKey.allowedDomains}
+            onDomainsChange={onDomainsChange}
+          />
+        </div>
       </div>
     </div>
   );

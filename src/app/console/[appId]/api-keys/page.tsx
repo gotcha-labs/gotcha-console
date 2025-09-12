@@ -17,7 +17,10 @@ export default async function ApiKeysPage({
   const accessToken = (await getAccessToken()).accessToken!!;
   const apps = await getApplications(accessToken);
   const keysByApp = await Promise.all(
-    apps.map(async (a) => ({ app: a, keys: await getApiKeys(accessToken, a.id) }))
+    apps.map(async (a) => ({
+      app: a,
+      keys: await getApiKeys(accessToken, a.id),
+    })),
   );
 
   async function handleGenKey(appId: string) {
@@ -28,6 +31,15 @@ export default async function ApiKeysPage({
   async function handleEditKey(appId: string, siteKey: string, label: string) {
     "use server";
     return await updateApiKey(appId, siteKey, { name: label });
+  }
+
+  async function handleDomainChange(
+    appId: string,
+    siteKey: string,
+    domains: string[],
+  ) {
+    "use server";
+    return await updateApiKey(appId, siteKey, { allowedDomains: domains });
   }
 
   return (
@@ -62,6 +74,10 @@ export default async function ApiKeysPage({
                     onEdit={async (l) => {
                       "use server";
                       await handleEditKey(app.id, key.siteKey, l);
+                    }}
+                    onDomainsChange={async (domains) => {
+                      "use server";
+                      await handleDomainChange(app.id, key.siteKey, domains);
                     }}
                   />
                 ))
