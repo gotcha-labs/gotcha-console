@@ -107,7 +107,7 @@ export default function DomainManager({
             value={newDomain}
             onChange={(e) => setNewDomain(e.target.value)}
             onKeyDown={handleKeyPress}
-            placeholder="e.g., example.com, localhost:3000"
+            placeholder="e.g., example.com, localhost"
             disabled={disabled || isAdding}
             className="flex-1 bg-gray-700 text-gray-200 px-3 py-2 rounded border border-gray-600 focus:border-blue-500 focus:outline-none text-sm placeholder-gray-400 disabled:opacity-50"
           />
