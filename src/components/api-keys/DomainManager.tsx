@@ -74,31 +74,25 @@ export default function DomainManager({
         </span>
       </div>
 
-      {domains.length === 0 ? (
-        <div className="text-sm text-amber-400 bg-amber-900/20 p-3 rounded border border-amber-700/30">
-          ⚠️ No domain restrictions - API key can be used from any domain
-        </div>
-      ) : (
-        <div className="space-y-2">
-          {domains.map((domain) => (
-            <div
-              key={domain}
-              className="flex items-center justify-between bg-gray-700 p-2 rounded border"
+      <div className="space-y-2">
+        {domains.map((domain) => (
+          <div
+            key={domain}
+            className="flex items-center justify-between bg-gray-700 p-2 rounded border"
+          >
+            <code className="text-sm text-gray-200">{domain}</code>
+            <button
+              type="button"
+              onClick={() => handleRemoveDomain(domain)}
+              disabled={disabled}
+              className="text-red-400 hover:text-red-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              title="Remove domain"
             >
-              <code className="text-sm text-gray-200">{domain}</code>
-              <button
-                type="button"
-                onClick={() => handleRemoveDomain(domain)}
-                disabled={disabled}
-                className="text-red-400 hover:text-red-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                title="Remove domain"
-              >
-                <XMarkIcon className="h-4 w-4" />
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
+              <XMarkIcon className="h-4 w-4" />
+            </button>
+          </div>
+        ))}
+      </div>
 
       <div className="space-y-2">
         <div className="flex items-center space-x-2">
@@ -129,8 +123,7 @@ export default function DomainManager({
         )}
 
         <div className="text-xs text-gray-500">
-          Add domains where this API key can be used. Leave empty to allow all
-          domains.
+          Add domains where this API key can be used.
         </div>
       </div>
     </div>
