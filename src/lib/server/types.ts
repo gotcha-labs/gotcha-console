@@ -1,3 +1,7 @@
+import { Prettify } from "../utils";
+
+export type ApiKeyUnstable = Prettify<ApiKey & { challengePool: string[] }>;
+
 export type ApiKey = {
   siteKey: string;
   secretKey: string;
@@ -17,3 +21,7 @@ export type ChallengePreferences = {
   smallHeight: number;
   logoUrl: string | null;
 };
+
+export type Challenge = Prettify<
+  { url: string; label: string | null } & ChallengePreferences
+>;

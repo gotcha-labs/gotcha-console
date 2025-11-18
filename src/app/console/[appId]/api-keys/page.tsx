@@ -1,9 +1,12 @@
 import ApiKeyCard from "@/components/api-keys/ApiKeyCard";
 import {
+  addChallengeToApiKeyPool,
   generateApiKey,
-  getApiKeys,
+  getApiKeysUnstable,
+  removeChallengeToApiKeyPool,
   updateApiKey,
 } from "@/lib/server/api-keys";
+import { getChallenges } from "@/lib/server/challenge";
 import { getApplications } from "@/lib/server/console";
 import { getAccessToken } from "@auth0/nextjs-auth0";
 
@@ -16,10 +19,11 @@ export default async function ApiKeysPage({
 }) {
   const accessToken = (await getAccessToken()).accessToken!!;
   const apps = await getApplications(accessToken);
+  const challenges = await getChallenges(accessToken);
   const keysByApp = await Promise.all(
     apps.map(async (a) => ({
       app: a,
-      keys: await getApiKeys(accessToken, a.id),
+      keys: await getApiKeysUnstable(accessToken, a.id),
     })),
   );
 
@@ -40,6 +44,24 @@ export default async function ApiKeysPage({
   ) {
     "use server";
     return await updateApiKey(appId, siteKey, { allowedDomains: domains });
+  }
+
+  async function handleAddChallenge(
+    appId: string,
+    siteKey: string,
+    challengeUrl: string,
+  ) {
+    "use server";
+    return await addChallengeToApiKeyPool(appId, siteKey, challengeUrl);
+  }
+
+  async function handleRemoveChallenge(
+    appId: string,
+    siteKey: string,
+    challengeUrl: string,
+  ) {
+    "use server";
+    return await removeChallengeToApiKeyPool(appId, siteKey, challengeUrl);
   }
 
   return (
@@ -71,6 +93,7 @@ export default async function ApiKeysPage({
                     key={key.siteKey}
                     apiKey={key}
                     appId={app.id}
+                    challenges={challenges}
                     onEdit={async (l) => {
                       "use server";
                       await handleEditKey(app.id, key.siteKey, l);
@@ -78,6 +101,22 @@ export default async function ApiKeysPage({
                     onDomainsChange={async (domains) => {
                       "use server";
                       await handleDomainChange(app.id, key.siteKey, domains);
+                    }}
+                    onAddChallenge={async (challengeUrl) => {
+                      "use server";
+                      await handleAddChallenge(
+                        app.id,
+                        key.siteKey,
+                        challengeUrl,
+                      );
+                    }}
+                    onRemoveChallenge={async (challengeUrl) => {
+                      "use server";
+                      await handleRemoveChallenge(
+                        app.id,
+                        key.siteKey,
+                        challengeUrl,
+                      );
                     }}
                   />
                 ))
