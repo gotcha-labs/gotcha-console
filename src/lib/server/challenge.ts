@@ -19,7 +19,12 @@ export const getChallenges = unstable_cache(
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
-    }).then((r) => r.json());
+    }).then((r) => {
+      if (!r.ok) {
+        throw new Error(`Failed to fetch challenges: ${r.status}`);
+      }
+      return r.json();
+    });
 
     return challenges.map((c) => ({
       url: c.url,

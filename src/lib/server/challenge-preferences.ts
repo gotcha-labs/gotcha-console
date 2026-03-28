@@ -15,7 +15,12 @@ export const getChallengePreferences = unstable_cache(
         },
       },
     )
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) {
+          throw new Error(`Failed to fetch challenge preferences: ${r.status}`);
+        }
+        return r.json();
+      })
       .then((challenge) => ({
         width: challenge.width,
         height: challenge.height,
@@ -36,7 +41,7 @@ export async function updateChallengePreferences(
   appId: string,
   update: UpdateChallengePreferences,
 ): Promise<void> {
-  await fetch(
+  const response = await fetch(
     `${env.GOTCHA_ORIGIN}/api/console/${appId}/challenge-preferences`,
     {
       method: "PATCH",
@@ -53,6 +58,10 @@ export async function updateChallengePreferences(
       }),
     },
   );
+
+  if (!response.ok) {
+    throw new Error(`Failed to update challenge preferences: ${response.status}`);
+  }
 
   revalidateTag("challenge-preferences");
 }

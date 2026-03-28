@@ -31,7 +31,7 @@ export const getApplications = unstable_cache(
 );
 
 export async function createApplication(name?: string) {
-  await fetch(`${env.GOTCHA_ORIGIN}/api/console`, {
+  const response = await fetch(`${env.GOTCHA_ORIGIN}/api/console`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -42,16 +42,24 @@ export async function createApplication(name?: string) {
     }),
   });
 
+  if (!response.ok) {
+    throw new Error(`Failed to create application: ${response.status}`);
+  }
+
   revalidateTag("applications");
 }
 
 export async function deleteApplication(id: string) {
-  await fetch(`${env.GOTCHA_ORIGIN}/api/console/${id}`, {
+  const response = await fetch(`${env.GOTCHA_ORIGIN}/api/console/${id}`, {
     method: "DELETE",
     headers: {
       Authorization: `Bearer ${(await getAccessToken()).accessToken}`,
     },
   });
+
+  if (!response.ok) {
+    throw new Error(`Failed to delete application: ${response.status}`);
+  }
 
   revalidateTag("applications");
 }
@@ -64,7 +72,7 @@ export async function updateApplication(
   consoleId: string,
   updateApp: UpdateApplication,
 ) {
-  await fetch(`${env.GOTCHA_ORIGIN}/api/console/${consoleId}`, {
+  const response = await fetch(`${env.GOTCHA_ORIGIN}/api/console/${consoleId}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -74,6 +82,10 @@ export async function updateApplication(
       label: updateApp.name ?? null,
     }),
   });
+
+  if (!response.ok) {
+    throw new Error(`Failed to update application: ${response.status}`);
+  }
 
   revalidateTag("applications");
 }

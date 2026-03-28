@@ -24,16 +24,22 @@ export const getApiKeysUnstable = async (
 
 export const getApiKeys = unstable_cache(
   async (accessToken: string, appId: string): Promise<ApiKey[]> => {
+    const response = await fetch(`${env.GOTCHA_ORIGIN}/api/console/${appId}/api-key`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch API keys: ${response.status}`);
+    }
+
     const keys: {
       site_key: string;
       secret: string;
       label: string | null;
       allowed_domains?: string[];
-    }[] = await fetch(`${env.GOTCHA_ORIGIN}/api/console/${appId}/api-key`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    }).then((r) => r.json());
+    }[] = await response.json();
 
     return keys.map((k) => ({
       siteKey: k.site_key,
@@ -47,12 +53,16 @@ export const getApiKeys = unstable_cache(
 );
 
 export async function generateApiKey(appId: string) {
-  await fetch(`${env.GOTCHA_ORIGIN}/api/console/${appId}/api-key`, {
+  const response = await fetch(`${env.GOTCHA_ORIGIN}/api/console/${appId}/api-key`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${(await getAccessToken()).accessToken}`,
     },
   });
+
+  if (!response.ok) {
+    throw new Error(`Failed to generate API key: ${response.status}`);
+  }
 
   revalidateTag("api-keys");
 }
@@ -67,7 +77,7 @@ export async function updateApiKey(
   siteKey: string,
   update: UpdateApiKey,
 ) {
-  await fetch(`${env.GOTCHA_ORIGIN}/api/console/${appId}/api-key/${siteKey}`, {
+  const response = await fetch(`${env.GOTCHA_ORIGIN}/api/console/${appId}/api-key/${siteKey}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -79,16 +89,24 @@ export async function updateApiKey(
     }),
   });
 
+  if (!response.ok) {
+    throw new Error(`Failed to update API key: ${response.status}`);
+  }
+
   revalidateTag("api-keys");
 }
 
 export async function revokeApiKey(appId: string, siteKey: string) {
-  await fetch(`${env.GOTCHA_ORIGIN}/api/console/${appId}/api-key/${siteKey}`, {
+  const response = await fetch(`${env.GOTCHA_ORIGIN}/api/console/${appId}/api-key/${siteKey}`, {
     method: "DELETE",
     headers: {
       Authorization: `Bearer ${(await getAccessToken()).accessToken}`,
     },
   });
+
+  if (!response.ok) {
+    throw new Error(`Failed to revoke API key: ${response.status}`);
+  }
 
   revalidateTag("api-keys");
 }
@@ -103,14 +121,20 @@ export const getApiKeysChallengePool = unstable_cache(
     appId: string,
     siteKey: string,
   ): Promise<ApiKeyChallengePool> => {
-    const challengePool: ApiKeyChallengePool = await fetch(
+    const response = await fetch(
       `${env.GOTCHA_ORIGIN}/api/console/${appId}/api-key/${siteKey}/challenge-pool`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       },
-    ).then((r) => r.json());
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch challenge pool: ${response.status}`);
+    }
+
+    const challengePool: ApiKeyChallengePool = await response.json();
 
     return challengePool;
   },
@@ -123,7 +147,7 @@ export async function addChallengeToApiKeyPool(
   siteKey: string,
   challengeUrl: string,
 ) {
-  await fetch(
+  const response = await fetch(
     `${env.GOTCHA_ORIGIN}/api/console/${appId}/api-key/${siteKey}/challenge-pool`,
     {
       method: "POST",
@@ -137,6 +161,10 @@ export async function addChallengeToApiKeyPool(
     },
   );
 
+  if (!response.ok) {
+    throw new Error(`Failed to add challenge to pool: ${response.status}`);
+  }
+
   revalidateTag("api-keys-challenge-pool");
 }
 
@@ -145,7 +173,7 @@ export async function removeChallengeToApiKeyPool(
   siteKey: string,
   challengeUrl: string,
 ) {
-  await fetch(
+  const response = await fetch(
     `${env.GOTCHA_ORIGIN}/api/console/${appId}/api-key/${siteKey}/challenge-pool`,
     {
       method: "DELETE",
@@ -158,6 +186,10 @@ export async function removeChallengeToApiKeyPool(
       }),
     },
   );
+
+  if (!response.ok) {
+    throw new Error(`Failed to remove challenge from pool: ${response.status}`);
+  }
 
   revalidateTag("api-keys-challenge-pool");
 }

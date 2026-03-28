@@ -18,9 +18,14 @@ export default function ConfirmModal({
 }) {
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="confirm-modal-title"
+    >
       <div className="bg-gray-800 rounded-lg p-6 w-80 shadow-lg">
-        <h2 className="text-lg font-semibold text-gray-100 mb-4">{title}</h2>
+        <h2 id="confirm-modal-title" className="text-lg font-semibold text-gray-100 mb-4">{title}</h2>
         {children && <div className="text-gray-300 mb-4">{children}</div>}
         <div className="flex justify-end space-x-3">
           <button
