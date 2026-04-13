@@ -11,7 +11,7 @@
   "dependencies": {
     "@auth0/nextjs-auth0": "3.8.0",
     "@heroicons/react": "^2.2.0",
-    "next": "^14.2",
+    "next": "14.2.35",
     "react": "^18",
     "react-dom": "^18",
     "zod": "^3.24.1"
