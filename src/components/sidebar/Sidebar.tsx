@@ -17,7 +17,7 @@ export default function Sidebar({ appId }: SidebarProps) {
       className={`fixed inset-y-0 left-0 z-40 w-64 bg-background flex-shrink-0 transform transition-transform md:relative md:translate-x-0 ${open ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}
     >
       <div className="p-6">
-        <img src="https://gotcha.land/HL_2.png" alt="Gotcha logo" className="h-8" />
+        <img src="/gotcha-logo.png" alt="Gotcha logo" className="h-8" />
       </div>
       <NavList>
         <NavItem href={`/console/${appId ?? ""}`}>

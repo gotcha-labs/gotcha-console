@@ -12,7 +12,7 @@ export default async function Home() {
           Welcome to{" "}
         </h1>
         <Image
-          src="https://gotcha.land/HL_2.png"
+          src="/gotcha-logo.png"
           alt="Gotcha logo"
           width={192}
           height={192}

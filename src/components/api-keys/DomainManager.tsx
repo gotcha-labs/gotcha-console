@@ -18,24 +18,45 @@ export default function DomainManager({
   const [isAdding, setIsAdding] = useState(false);
   const [error, setError] = useState("");
 
-  const handleAddDomain = async () => {
-    const trimmedDomain = newDomain.trim();
+  const normalizeDomain = (input: string): string => {
+    let domain = input.trim().toLowerCase();
+    // Strip protocol (http://, https://)
+    domain = domain.replace(/^https?:\/\//, "");
+    // Strip trailing slashes and paths
+    domain = domain.replace(/\/.*$/, "");
+    // Strip port
+    domain = domain.replace(/:\d+$/, "");
+    return domain;
+  };
 
-    if (!trimmedDomain) {
+  const handleAddDomain = async () => {
+    const normalizedDomain = normalizeDomain(newDomain);
+
+    if (!normalizedDomain) {
       setError("Domain cannot be empty");
       return;
     }
 
-    if (domains.includes(trimmedDomain)) {
+    if (domains.includes(normalizedDomain)) {
       setError("Domain already exists");
       return;
+    }
+
+    // Automatically pair www. and non-www. variants
+    const domainsToAdd = [normalizedDomain];
+    if (normalizedDomain.startsWith("www.")) {
+      const bare = normalizedDomain.slice(4);
+      if (bare && !domains.includes(bare)) domainsToAdd.push(bare);
+    } else {
+      const www = `www.${normalizedDomain}`;
+      if (!domains.includes(www)) domainsToAdd.push(www);
     }
 
     setError("");
     setIsAdding(true);
 
     try {
-      const updatedDomains = [...domains, trimmedDomain];
+      const updatedDomains = [...domains, ...domainsToAdd];
       await onDomainsChange?.(updatedDomains);
       setNewDomain("");
     } catch (err) {
