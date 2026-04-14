@@ -4,7 +4,7 @@ import {
   updateChallengePreferences,
 } from "@/lib/server/challenge-preferences";
 import { ChallengePreferences } from "@/lib/server/types";
-import { getAccessToken } from "@auth0/nextjs-auth0";
+import { getAccessTokenOrLogout } from "@/lib/server/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -13,7 +13,7 @@ export default async function ChallengePreferencesPage({
 }: {
   params: { appId: string };
 }) {
-  const accessToken = (await getAccessToken()).accessToken!!;
+  const accessToken = await getAccessTokenOrLogout();
   const preferences = await getChallengePreferences(accessToken, params.appId);
 
   async function handleUpdatePreferences(

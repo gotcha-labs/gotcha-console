@@ -8,7 +8,7 @@ import {
 } from "@/lib/server/api-keys";
 import { getChallenges } from "@/lib/server/challenge";
 import { getApplications } from "@/lib/server/console";
-import { getAccessToken } from "@auth0/nextjs-auth0";
+import { getAccessTokenOrLogout } from "@/lib/server/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -17,7 +17,7 @@ export default async function ApiKeysPage({
 }: {
   params: { appId: string };
 }) {
-  const accessToken = (await getAccessToken()).accessToken!!;
+  const accessToken = await getAccessTokenOrLogout();
   const apps = await getApplications(accessToken);
   const challenges = await getChallenges(accessToken);
   const keysByApp = await Promise.all(

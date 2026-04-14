@@ -2,7 +2,7 @@ import Sidebar from "@/components/sidebar/Sidebar";
 import Topbar from "@/components/topbar/Topbar";
 import { SidebarProvider } from "@/components/sidebar/SidebarContext";
 import { getApplications } from "@/lib/server/console";
-import { getAccessToken } from "@auth0/nextjs-auth0";
+import { getAccessTokenOrLogout } from "@/lib/server/auth";
 import { redirect } from "next/navigation";
 
 export default async function DashboardLayout({
@@ -12,8 +12,8 @@ export default async function DashboardLayout({
   children: React.ReactNode;
   params: { appId: string };
 }) {
-  const tokenRes = await getAccessToken();
-  const apps = await getApplications(tokenRes.accessToken!!);
+  const accessToken = await getAccessTokenOrLogout();
+  const apps = await getApplications(accessToken);
   if (apps.length === 0 || !apps.some((a) => a.id === params.appId)) {
     return redirect("/console");
   }
