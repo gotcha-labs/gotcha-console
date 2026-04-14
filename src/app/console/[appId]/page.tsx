@@ -1,13 +1,13 @@
 import { createApplication, getApplications } from "@/lib/server/console";
 import ApplicationCard from "@/components/console/ApplicationCard";
-import { getAccessToken } from "@auth0/nextjs-auth0";
+import { getAccessTokenOrLogout } from "@/lib/server/auth";
 import { PlusIcon } from "@heroicons/react/24/outline";
 
 export const dynamic = "force-dynamic";
 
 export default async function ConsolePage() {
-  const tokenRes = await getAccessToken();
-  const apps = await getApplications(tokenRes.accessToken!!);
+  const accessToken = await getAccessTokenOrLogout();
+  const apps = await getApplications(accessToken);
 
   async function handleSubmit(form: FormData) {
     "use server";
