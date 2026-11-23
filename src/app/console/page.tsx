@@ -2,11 +2,11 @@ import { getApplications, createApplication } from "@/lib/server/console";
 import { redirect } from "next/navigation";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
-import { getAccessToken } from "@auth0/nextjs-auth0";
+import { getAccessTokenOrLogout } from "@/lib/server/auth";
 
 export default async function WelcomeConsolePage() {
-  const tokenRes = await getAccessToken();
-  const appsList = await getApplications(tokenRes.accessToken!!);
+  const accessToken = await getAccessTokenOrLogout();
+  const appsList = await getApplications(accessToken);
   if (appsList.length > 0) {
     redirect(`/console/${appsList[0].id}`);
   }

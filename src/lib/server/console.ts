@@ -2,7 +2,7 @@
 
 import { revalidateTag, unstable_cache } from "next/cache";
 import { Application } from "./types";
-import { getAccessToken } from "@auth0/nextjs-auth0";
+import { getAccessTokenOrLogout } from "./auth";
 import env from "./env";
 
 export const getApplications = unstable_cache(
@@ -35,7 +35,7 @@ export async function createApplication(name?: string) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${(await getAccessToken()).accessToken}`,
+      Authorization: `Bearer ${await getAccessTokenOrLogout()}`,
     },
     body: JSON.stringify({
       label: name ?? "New Application",
@@ -49,7 +49,7 @@ export async function deleteApplication(id: string) {
   await fetch(`${env.GOTCHA_ORIGIN}/api/console/${id}`, {
     method: "DELETE",
     headers: {
-      Authorization: `Bearer ${(await getAccessToken()).accessToken}`,
+      Authorization: `Bearer ${await getAccessTokenOrLogout()}`,
     },
   });
 
@@ -68,7 +68,7 @@ export async function updateApplication(
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${(await getAccessToken()).accessToken}`,
+      Authorization: `Bearer ${await getAccessTokenOrLogout()}`,
     },
     body: JSON.stringify({
       label: updateApp.name ?? null,

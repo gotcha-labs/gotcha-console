@@ -2,7 +2,7 @@
 
 import { revalidateTag, unstable_cache } from "next/cache";
 import { ApiKey, ApiKeyUnstable } from "./types";
-import { getAccessToken } from "@auth0/nextjs-auth0";
+import { getAccessTokenOrLogout } from "./auth";
 import env from "./env";
 
 export const getApiKeysUnstable = async (
@@ -50,7 +50,7 @@ export async function generateApiKey(appId: string) {
   await fetch(`${env.GOTCHA_ORIGIN}/api/console/${appId}/api-key`, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${(await getAccessToken()).accessToken}`,
+      Authorization: `Bearer ${await getAccessTokenOrLogout()}`,
     },
   });
 
@@ -71,7 +71,7 @@ export async function updateApiKey(
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${(await getAccessToken()).accessToken}`,
+      Authorization: `Bearer ${await getAccessTokenOrLogout()}`,
     },
     body: JSON.stringify({
       label: update.name ?? null,
@@ -86,7 +86,7 @@ export async function revokeApiKey(appId: string, siteKey: string) {
   await fetch(`${env.GOTCHA_ORIGIN}/api/console/${appId}/api-key/${siteKey}`, {
     method: "DELETE",
     headers: {
-      Authorization: `Bearer ${(await getAccessToken()).accessToken}`,
+      Authorization: `Bearer ${await getAccessTokenOrLogout()}`,
     },
   });
 
@@ -129,7 +129,7 @@ export async function addChallengeToApiKeyPool(
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${(await getAccessToken()).accessToken}`,
+        Authorization: `Bearer ${await getAccessTokenOrLogout()}`,
       },
       body: JSON.stringify({
         challenge_url: challengeUrl,
@@ -151,7 +151,7 @@ export async function removeChallengeToApiKeyPool(
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${(await getAccessToken()).accessToken}`,
+        Authorization: `Bearer ${await getAccessTokenOrLogout()}`,
       },
       body: JSON.stringify({
         challenge_url: challengeUrl,

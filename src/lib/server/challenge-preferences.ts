@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidateTag, unstable_cache } from "next/cache";
-import { getAccessToken } from "@auth0/nextjs-auth0";
+import { getAccessTokenOrLogout } from "./auth";
 import { ChallengePreferences } from "./types";
 import env from "./env";
 
@@ -42,7 +42,7 @@ export async function updateChallengePreferences(
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${(await getAccessToken()).accessToken}`,
+        Authorization: `Bearer ${await getAccessTokenOrLogout()}`,
       },
       body: JSON.stringify({
         width: update.width,
