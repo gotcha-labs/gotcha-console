@@ -7,9 +7,10 @@ import Image from "next/image";
 
 type SidebarProps = {
   appId?: string;
+  isAdmin?: boolean;
 };
 
-export default function Sidebar({ appId }: SidebarProps) {
+export default function Sidebar({ appId, isAdmin }: SidebarProps) {
   const { open } = useSidebar();
 
   return (
@@ -32,6 +33,12 @@ export default function Sidebar({ appId }: SidebarProps) {
           <span className="mr-3">🧩</span>
           Challenge preferences
         </NavItem>
+        {isAdmin && (
+          <NavItem href="/console/admin">
+            <span className="mr-3">🎮</span>
+            Games (admin)
+          </NavItem>
+        )}
       </NavList>
     </aside>
   );

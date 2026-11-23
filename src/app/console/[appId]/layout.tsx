@@ -4,6 +4,7 @@ import { SidebarProvider } from "@/components/sidebar/SidebarContext";
 import { getApplications } from "@/lib/server/console";
 import { getAccessToken } from "@auth0/nextjs-auth0";
 import { redirect } from "next/navigation";
+import { isAdmin } from "@/lib/server/admin";
 
 export default async function DashboardLayout({
   children,
@@ -21,7 +22,7 @@ export default async function DashboardLayout({
   return (
     <SidebarProvider>
       <div className="flex h-screen">
-        <Sidebar appId={params.appId} />
+        <Sidebar appId={params.appId} isAdmin={await isAdmin()} />
 
         <div className="flex-1 flex flex-col bg-background">
           <Topbar />
