@@ -7,7 +7,7 @@ import {
   updateApiKey,
 } from "@/lib/server/api-keys";
 import { getChallenges } from "@/lib/server/challenge";
-import { getApplications } from "@/lib/server/console";
+
 import { getAccessToken } from "@auth0/nextjs-auth0";
 
 export const dynamic = "force-dynamic";
@@ -18,14 +18,10 @@ export default async function ApiKeysPage({
   params: { appId: string };
 }) {
   const accessToken = (await getAccessToken()).accessToken!!;
-  const apps = await getApplications(accessToken);
-  const challenges = await getChallenges(accessToken);
-  const keysByApp = await Promise.all(
-    apps.map(async (a) => ({
-      app: a,
-      keys: await getApiKeysUnstable(accessToken, a.id),
-    })),
-  );
+  const [challenges, appKeys] = await Promise.all([
+    getChallenges(accessToken),
+    getApiKeysUnstable(accessToken, params.appId),
+  ]);
 
   async function handleGenKey(appId: string) {
     "use server";
@@ -66,64 +62,54 @@ export default async function ApiKeysPage({
 
   return (
     <>
-      <h2 className="text-2xl font-bold text-gray-100 mb-6">API Keys</h2>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold text-gray-100">API Keys</h2>
+        <form action={handleGenKey.bind(null, params.appId)}>
+          <input
+            type="submit"
+            value="Generate New API Key"
+            className="bg-blue-500 hover:bg-blue-600 cursor-pointer text-white px-4 py-2 rounded-md"
+          />
+        </form>
+      </div>
 
-      <div className="space-y-8">
-        {keysByApp.map(({ app, keys: appKeys }) => (
-          <div key={app.id} className="space-y-4">
-            <div className="flex justify-between items-center">
-              <h3 className="text-xl font-bold text-gray-100">
-                {app.name ?? "New Application"}
-              </h3>
-              <form action={handleGenKey.bind(null, app.id)}>
-                <input
-                  type="submit"
-                  value="Generate New API Key"
-                  className="bg-blue-500 hover:bg-blue-600 cursor-pointer text-white px-4 py-2 rounded-md"
-                />
-              </form>
-            </div>
-
-            <div className="space-y-4">
-              {appKeys.length === 0 ? (
-                <p className="text-gray-400">No API keys yet.</p>
-              ) : (
-                appKeys.map((key) => (
-                  <ApiKeyCard
-                    key={key.siteKey}
-                    apiKey={key}
-                    appId={app.id}
-                    challenges={challenges}
-                    onEdit={async (l) => {
-                      "use server";
-                      await handleEditKey(app.id, key.siteKey, l);
-                    }}
-                    onDomainsChange={async (domains) => {
-                      "use server";
-                      await handleDomainChange(app.id, key.siteKey, domains);
-                    }}
-                    onAddChallenge={async (challengeUrl) => {
-                      "use server";
-                      await handleAddChallenge(
-                        app.id,
-                        key.siteKey,
-                        challengeUrl,
-                      );
-                    }}
-                    onRemoveChallenge={async (challengeUrl) => {
-                      "use server";
-                      await handleRemoveChallenge(
-                        app.id,
-                        key.siteKey,
-                        challengeUrl,
-                      );
-                    }}
-                  />
-                ))
-              )}
-            </div>
-          </div>
-        ))}
+      <div className="space-y-4">
+        {appKeys.length === 0 ? (
+          <p className="text-gray-400">No API keys yet.</p>
+        ) : (
+          appKeys.map((key) => (
+            <ApiKeyCard
+              key={key.siteKey}
+              apiKey={key}
+              appId={params.appId}
+              challenges={challenges}
+              onEdit={async (l) => {
+                "use server";
+                await handleEditKey(params.appId, key.siteKey, l);
+              }}
+              onDomainsChange={async (domains) => {
+                "use server";
+                await handleDomainChange(params.appId, key.siteKey, domains);
+              }}
+              onAddChallenge={async (challengeUrl) => {
+                "use server";
+                await handleAddChallenge(
+                  params.appId,
+                  key.siteKey,
+                  challengeUrl,
+                );
+              }}
+              onRemoveChallenge={async (challengeUrl) => {
+                "use server";
+                await handleRemoveChallenge(
+                  params.appId,
+                  key.siteKey,
+                  challengeUrl,
+                );
+              }}
+            />
+          ))
+        )}
       </div>
     </>
   );
