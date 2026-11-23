@@ -34,14 +34,15 @@ const file = (f: FormData, k: string) => {
 
 export async function addGame(form: FormData) {
   return run(async () => {
-    const name = str(form, "name").toLowerCase();
+    let repo = str(form, "repo");
+    // Name defaults to the picked repo's name.
+    const name = (str(form, "name") || repo.split("/")[1] || "").toLowerCase().replace(/[^a-z0-9-]/g, "-");
     if (!/^[a-z0-9][a-z0-9-]{0,56}$/.test(name)) throw new Error("Name: lowercase letters, digits and dashes (e.g. game-rocket)");
     const label = str(form, "label") || name;
     const description = str(form, "description");
     const width = Number(str(form, "width") || 360);
     const height = Number(str(form, "height") || 500);
     const gameJs = file(form, "game_js");
-    let repo = str(form, "repo");
 
     if (gameJs) repo = await pushGameJs(name, await gameJs.text());
     if (!/^[\w.-]+\/[\w.-]+$/.test(repo)) throw new Error("Upload a game.js, or give an existing GitHub repo as owner/name");

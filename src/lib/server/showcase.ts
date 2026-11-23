@@ -5,7 +5,7 @@ import { randomBytes } from "node:crypto";
 
 const SUPABASE_URL = process.env.SUPABASE_URL || "https://zdhpbdwcjqyoskhbmslh.supabase.co";
 const CF_ACCOUNT = process.env.CLOUDFLARE_ACCOUNT_ID || "05bb2df4451c2a8f2fae5c79182b199a";
-const GH_ORG = process.env.GITHUB_ORG || "gotcha-labs";
+export const GITHUB_ORG = process.env.GITHUB_ORG || "gotcha-labs";
 const GH_TEMPLATE = process.env.GITHUB_TEMPLATE_REPO || "gotcha-game-template";
 const SHOWCASE_DOMAINS = (process.env.SHOWCASE_DOMAINS || "gotcha.land,www.gotcha.land,dev.gotcha.land,localhost").split(",");
 
@@ -22,7 +22,7 @@ export type ShowcaseGame = {
   challenge: { default_width: number; default_height: number } | null;
 };
 
-export type DeployStatus = { stage: string; status: string; at: string | null } | null;
+export type DeployStatus = { stage: string; status: string; at: string | null; repo: string | null } | null;
 
 /** Which integrations have their secrets configured (the page shows what's missing). */
 export const configured = {
@@ -154,7 +154,13 @@ export async function deployStatus(name: string | null): Promise<DeployStatus> {
   try {
     const p = await cf<any>(`/${name}`);
     const d = p.latest_deployment;
-    return d ? { stage: d.latest_stage?.name, status: d.latest_stage?.status, at: d.created_on } : null;
+    const src = p.source?.config;
+    return {
+      stage: d?.latest_stage?.name ?? "none",
+      status: d?.latest_stage?.status ?? "",
+      at: d?.created_on ?? null,
+      repo: src ? `${src.owner}/${src.repo_name}` : null,
+    };
   } catch {
     return null;
   }
@@ -172,13 +178,22 @@ async function gh(path: string, init: { method?: string; body?: unknown } = {}) 
   });
 }
 
+/** The org's repos for the admin "pick a repo" list, most recently pushed first ([] if GitHub isn't set up). */
+export async function listOrgRepos(): Promise<string[]> {
+  if (!process.env.GITHUB_TOKEN) return [];
+  const res = await gh(`/orgs/${GITHUB_ORG}/repos?per_page=100&sort=pushed&direction=desc`);
+  if (!res.ok) return [];
+  const repos: { full_name: string; is_template: boolean; archived: boolean }[] = await res.json();
+  return repos.filter((r) => !r.is_template && !r.archived).map((r) => r.full_name);
+}
+
 /** Creates `org/name` from the game template if missing, then writes game.js to main (Cloudflare rebuilds). */
 export async function pushGameJs(name: string, gameJs: string): Promise<string> {
-  const repo = `${GH_ORG}/${name}`;
+  const repo = `${GITHUB_ORG}/${name}`;
   if ((await gh(`/repos/${repo}`)).status === 404) {
-    const res = await gh(`/repos/${GH_ORG}/${GH_TEMPLATE}/generate`, {
+    const res = await gh(`/repos/${GITHUB_ORG}/${GH_TEMPLATE}/generate`, {
       method: "POST",
-      body: { owner: GH_ORG, name, private: true },
+      body: { owner: GITHUB_ORG, name, private: true },
     });
     if (!res.ok) throw new Error(`GitHub: could not create ${repo}: ${res.status} ${await res.text()}`);
   }

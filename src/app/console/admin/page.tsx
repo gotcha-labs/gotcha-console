@@ -1,5 +1,5 @@
 import { addGame, deleteGame, redeployGame, updateGame } from "@/lib/server/showcase-actions";
-import { configured, deployStatus, listGames, ShowcaseGame } from "@/lib/server/showcase";
+import { configured, deployStatus, listGames, listOrgRepos, ShowcaseGame } from "@/lib/server/showcase";
 
 export const dynamic = "force-dynamic";
 
@@ -22,7 +22,14 @@ export default async function AdminGamesPage({ searchParams }: { searchParams: {
   } catch (e) {
     loadError = e instanceof Error ? e.message : String(e);
   }
-  const statuses = await Promise.all(games.map((g) => deployStatus(g.pages_project)));
+  const [statuses, allRepos] = await Promise.all([
+    Promise.all(games.map((g) => deployStatus(g.pages_project))),
+    listOrgRepos(),
+  ]);
+  // Hide repos already on the website (by saved repo, or the repo its Cloudflare project builds from).
+  const used = new Set(games.flatMap((g, i) => [g.repo, statuses[i]?.repo]).map((r) => r?.toLowerCase()));
+  const repos = allRepos.filter((r) => !used.has(r.toLowerCase()));
+  const isGame = (r: string) => /\/game/i.test(r);
 
   return (
     <div className="max-w-5xl space-y-8">
@@ -48,24 +55,36 @@ export default async function AdminGamesPage({ searchParams }: { searchParams: {
         <h3 id="add-game" className="text-lg font-semibold text-gray-100 mb-4">Add game</h3>
         <form action={addGame} className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className={label} htmlFor="name">Name (repo + Cloudflare project)</label>
-            <input className={input} id="name" name="name" required placeholder="game-rocket" pattern="[a-z0-9][a-z0-9-]*" />
+            <label className={label} htmlFor="repo">Pick a game from GitHub</label>
+            {repos.length > 0 ? (
+              <select className={input} id="repo" name="repo" defaultValue="">
+                <option value="">— none: upload a game.js below —</option>
+                <optgroup label="Games">
+                  {repos.filter(isGame).map((r) => <option key={r} value={r}>{r}</option>)}
+                </optgroup>
+                <optgroup label="Other repos">
+                  {repos.filter((r) => !isGame(r)).map((r) => <option key={r} value={r}>{r}</option>)}
+                </optgroup>
+              </select>
+            ) : (
+              <input className={input} id="repo" name="repo" placeholder="gotcha-labs/game-rocket" />
+            )}
+          </div>
+          <div>
+            <label className={label} htmlFor="game_js">…or upload game.js (from the Game Creator) — creates the repo</label>
+            <input className={input} id="game_js" name="game_js" type="file" accept=".js,text/javascript" />
           </div>
           <div>
             <label className={label} htmlFor="label">Title on website</label>
             <input className={input} id="label" name="label" required placeholder="Rocket" />
           </div>
+          <div>
+            <label className={label} htmlFor="name">Cloudflare project name (optional — defaults to the repo name)</label>
+            <input className={input} id="name" name="name" placeholder="game-rocket" pattern="[a-z0-9][a-z0-9-]*" />
+          </div>
           <div className="md:col-span-2">
             <label className={label} htmlFor="description">Description</label>
             <input className={input} id="description" name="description" placeholder="One sentence shown under the game" />
-          </div>
-          <div>
-            <label className={label} htmlFor="game_js">game.js (from the Game Creator) — creates the repo for you</label>
-            <input className={input} id="game_js" name="game_js" type="file" accept=".js,text/javascript" />
-          </div>
-          <div>
-            <label className={label} htmlFor="repo">…or an existing GitHub repo</label>
-            <input className={input} id="repo" name="repo" placeholder="gotcha-labs/game-rocket" />
           </div>
           <div>
             <label className={label} htmlFor="preview">Preview image</label>
